@@ -4,14 +4,11 @@ import java.time.LocalDate;
 import java.util.Set;
 
 final class ValidationHelper {
-
-    static final Set<String> ALLOWED_STATES = Set.of("COMPLETED", "CONFIRMED", "CANCELED", "NO_SHOW");
-    static final Set<String> ALLOWED_CATEGORIES = Set.of("HAIRCUT", "MANICURE", "MASSAGE", "FACIAL");
     static final int MIN_SERVICE_DURATION = 15;
     static final int MAX_SERVICE_DURATION = 240;
 
     private ValidationHelper(){
-
+        throw new UnsupportedOperationException("Utility class cannot be instantiated!");
     }
 
     static <T> T requireNotNull(T obj, String fieldName){

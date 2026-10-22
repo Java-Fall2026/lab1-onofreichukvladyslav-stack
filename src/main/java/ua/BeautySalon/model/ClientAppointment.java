@@ -1,31 +1,31 @@
 package ua.BeautySalon.model;
 
 import ua.BeautySalon.util.BeautySalonUtils;
-import ua.common.BaseEntity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public class ClientAppointment extends BaseEntity{
+public class ClientAppointment {
+    private final LocalDateTime createdAt;
     private final BeautyClient client;
     private final Master master;
     private final BeautyService service;
     private final LocalDate appointmentDate;
     private final LocalTime startTime;
-    private String state;
+    private AppointmentState state;
 
-    public ClientAppointment(BeautyClient client, Master master, BeautyService service, LocalDate appointmentDate, LocalTime startTime, String state){
-        super();
+    public ClientAppointment(BeautyClient client, Master master, BeautyService service, LocalDate appointmentDate, LocalTime startTime, AppointmentState state){
+        this.createdAt = LocalDateTime.now();
         this.client = BeautySalonUtils.validateNotNull(client, "Appointment client");
         this.master = BeautySalonUtils.validateNotNull(master, "Appointment master");
         this.service = BeautySalonUtils.validateNotNull(service, "Appointment service");
 
-        BeautySalonUtils.validateCategoryMatch(this.master.getCategory(), this.service.getCategory());
+        BeautySalonUtils.validateCategoryMatch(this.master.category(), this.service.category());
 
         this.appointmentDate = BeautySalonUtils.validateNotNull(appointmentDate, "Appointment Date");
         this.startTime = BeautySalonUtils.validateNotNull(startTime, "Start Time");
-        setState(state);
     }
 
     public BeautyClient getClient() {
@@ -48,12 +48,12 @@ public class ClientAppointment extends BaseEntity{
         return startTime;
     }
 
-    public String getState() {
+    public AppointmentState getState() {
         return state;
     }
 
-    public final void setState(String state){
-        this.state = BeautySalonUtils.validateState(state);
+    public final void setState(AppointmentState state){
+        this.state = BeautySalonUtils.validateNotNull(state, "Appointment State");
     }
 
     @Override
@@ -72,9 +72,9 @@ public class ClientAppointment extends BaseEntity{
     @Override
     public String toString() {
         return "ClientAppointment{" +
-                "client=" + client.getName() +
-                ", master=" + master.getFullName() +
-                ", service=" + service.getName() +
+                "client=" + client.name() +
+                ", master=" + master.fullName() +
+                ", service=" + service.name() +
                 ", appointmentDate=" + appointmentDate +
                 ", startTime=" + startTime +
                 ", state='" + state + '\'' +
