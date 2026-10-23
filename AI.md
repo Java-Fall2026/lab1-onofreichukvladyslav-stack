@@ -7,12 +7,11 @@
 **Інструменти й промпти** (ключові — дослівно):
 Gemini
 
-Для того, щоб навчитись писати класи, я отримав завдання створити базу для салону краси. Створив класи для клієнта, послуги, майстера, обслуговування клієнта та класи для форматування та валидації.
-Як мені правильно зробити перевірку категорій та статусу обслуговування?
+Мені треба пререробити класи, поля яких не повинні після створення у record класи. Як це можна зробити?
 
 **Що AI зробив неправильно або не так, як вимагає завдання, і як ви це помітили:**
-ШІ змінні ALLOWED_STATES, ALLOWED_CATEGORIES, MIN_SERVICE_DURATION, MAX_SERVICE_DURATION та MIN_CLIENT_AGE як private у BeautySalonUtils, що порушує умову доступу public.
+ШІ змінні MIN_SERVICE_DURATION, MAX_SERVICE_DURATION та MIN_CLIENT_AGE як private у BeautySalonUtils, що порушує умову доступу public.
 
 **Що виправили самостійно і чому:**
-Переписав ALLOWED_STATES, ALLOWED_CATEGORIES, MIN_SERVICE_DURATION, MAX_SERVICE_DURATION та MIN_CLIENT_AGE для дотримання умови задачі.
+Переписав MIN_SERVICE_DURATION, MAX_SERVICE_DURATION та MIN_CLIENT_AGE для дотримання умови задачі.
 Тепер у BeautySalonUtils викликається як ValidationHelper.НАЗВА_ЗМІННИ
