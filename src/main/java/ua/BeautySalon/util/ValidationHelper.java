@@ -1,7 +1,6 @@
 package ua.BeautySalon.util;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 final class ValidationHelper {
     static final int MIN_SERVICE_DURATION = 15;
