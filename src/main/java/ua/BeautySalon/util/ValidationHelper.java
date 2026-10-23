@@ -41,17 +41,6 @@ final class ValidationHelper {
         return BirthDate;
     }
 
-    static String requireInList(String value, Set<String> allowedValues, String fieldName){
-        requireNotBlank(value, fieldName);
-        String upper = value.trim().toUpperCase();
-        for (String allowed : allowedValues){
-            if (allowed.equals(upper)){
-                return upper;
-            }
-        }
-        throw new IllegalArgumentException(fieldName + " must be one of " + allowedValues);
-    }
-
     static int requireInRange(int value, int min, int max, String fieldName){
         if (value < min || value > max) throw new IllegalArgumentException(fieldName + "must be more than" + min + "and less than" + max);
         return value;
