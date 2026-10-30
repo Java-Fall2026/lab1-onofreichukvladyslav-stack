@@ -1,17 +1,13 @@
 package ua.BeautySalon.util;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 final class ValidationHelper {
-
-    static final Set<String> ALLOWED_STATES = Set.of("COMPLETED", "CONFIRMED", "CANCELED", "NO_SHOW");
-    static final Set<String> ALLOWED_CATEGORIES = Set.of("HAIRCUT", "MANICURE", "MASSAGE", "FACIAL");
     static final int MIN_SERVICE_DURATION = 15;
     static final int MAX_SERVICE_DURATION = 240;
 
     private ValidationHelper(){
-
+        throw new UnsupportedOperationException("Utility class cannot be instantiated!");
     }
 
     static <T> T requireNotNull(T obj, String fieldName){
@@ -42,17 +38,6 @@ final class ValidationHelper {
             throw new IllegalArgumentException("must be 14+" + "got age " + actualAge);
         }
         return BirthDate;
-    }
-
-    static String requireInList(String value, Set<String> allowedValues, String fieldName){
-        requireNotBlank(value, fieldName);
-        String upper = value.trim().toUpperCase();
-        for (String allowed : allowedValues){
-            if (allowed.equals(upper)){
-                return upper;
-            }
-        }
-        throw new IllegalArgumentException(fieldName + " must be one of " + allowedValues);
     }
 
     static int requireInRange(int value, int min, int max, String fieldName){
