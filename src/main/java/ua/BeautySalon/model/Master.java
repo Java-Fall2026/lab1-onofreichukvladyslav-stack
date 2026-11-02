@@ -3,6 +3,7 @@ package ua.BeautySalon.model;
 import ua.BeautySalon.util.BeautySalonUtils;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public record Master (
         String employeeId,
@@ -20,5 +21,18 @@ public record Master (
 
     public static Master of(String employeeId, String fullName, ServiceCategory category){
         return new Master(employeeId, fullName, category, LocalDateTime.now());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Master master = (Master) o;
+        return Objects.equals(employeeId, master.employeeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId);
     }
 }

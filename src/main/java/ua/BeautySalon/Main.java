@@ -37,8 +37,8 @@ public class Main {
         Master master1 = Master.of("M-101", "Анна Ткаченко", ServiceCategory.HAIRCUT);
         BeautyService service1 = new BeautyService("SRV-01", "Жіноча стрижка", ServiceCategory.HAIRCUT, 60, 850);
 
-        String catDesc = BeautySalonUtils.getCategoryDescription(service1.category());
-        System.out.println("Опис категорії (" + service1.category() + "): " + catDesc);
+        String catDesc = BeautySalonUtils.getCategoryDescription(service1.getCategory());
+        System.out.println("Опис категорії (" + service1.getCategory() + "): " + catDesc);
 
         AppointmentState currentState = AppointmentState.CONFIRMED;
         String actionInstruction = BeautySalonUtils.getActionInstruction(currentState);

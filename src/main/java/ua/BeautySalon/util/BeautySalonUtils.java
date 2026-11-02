@@ -67,11 +67,11 @@ public final class BeautySalonUtils {
 
     public static java.time.LocalTime calculateEndTime(ClientAppointment appointment) {
         validateNotNull(appointment, "Appointment");
-        return appointment.getStartTime().plusMinutes(appointment.getService().durationMinutes());
+        return appointment.getStartTime().plusMinutes(appointment.getService().getDurationMinutes());
     }
 
     public static double calculatePricePerMinute(BeautyService service){
         validateNotNull(service, "Beauty service");
-        return service.price() / service.durationMinutes();
+        return service.getPrice() / service.getDurationMinutes();
     }
 }

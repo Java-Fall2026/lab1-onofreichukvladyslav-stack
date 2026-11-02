@@ -4,6 +4,7 @@ import ua.BeautySalon.util.BeautySalonUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public record BeautyClient (
         String phone,
@@ -21,5 +22,18 @@ public record BeautyClient (
 
     public static BeautyClient of(String phone, String name, LocalDate birthDate){
         return new BeautyClient(phone, name, birthDate, LocalDateTime.now());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BeautyClient that = (BeautyClient) o;
+        return Objects.equals(phone, that.phone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(phone);
     }
 }
