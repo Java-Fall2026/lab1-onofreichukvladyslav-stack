@@ -22,10 +22,12 @@ public class ClientAppointment {
         this.master = BeautySalonUtils.validateNotNull(master, "Appointment master");
         this.service = BeautySalonUtils.validateNotNull(service, "Appointment service");
 
-        BeautySalonUtils.validateCategoryMatch(this.master.category(), this.service.category());
+        BeautySalonUtils.validateCategoryMatch(this.master.category(), this.service.getCategory());
 
         this.appointmentDate = BeautySalonUtils.validateNotNull(appointmentDate, "Appointment Date");
         this.startTime = BeautySalonUtils.validateNotNull(startTime, "Start Time");
+
+        setState(state);
     }
 
     public BeautyClient getClient() {
@@ -74,7 +76,7 @@ public class ClientAppointment {
         return "ClientAppointment{" +
                 "client=" + client.name() +
                 ", master=" + master.fullName() +
-                ", service=" + service.name() +
+                ", service=" + service.getName() +
                 ", appointmentDate=" + appointmentDate +
                 ", startTime=" + startTime +
                 ", state='" + state + '\'' +
