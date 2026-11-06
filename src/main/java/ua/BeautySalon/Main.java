@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args){
@@ -52,14 +51,14 @@ public class Main {
         }
 
         System.out.println("\n=== 5. Два однакові record-об'єкти: equals та hashCode ===");
-        LocalDateTime fixedTime = LocalDateTime.of(2026, 1, 1, 12, 0);
-
-        BeautyClient c1 = new BeautyClient("+380971112233", "Олена Мельничук", LocalDate.of(1995, 3, 10), fixedTime);
-        BeautyClient c2 = new BeautyClient("+380971112233", "Олена Мельничук", LocalDate.of(1995, 3, 10), fixedTime);
+        BeautyClient c1 = new BeautyClient("+380971112233", "Олена Мельничук", LocalDate.of(1995, 3, 10));
+        BeautyClient c2 = new BeautyClient("+380971112233", "Олена Мельничук", LocalDate.of(1995, 3, 10));
+        BeautyClient clientDifferent = BeautyClient.of("+380509990011", "Ірина", LocalDate.of(1998, 5, 14));
 
         System.out.println("c1 == c2: " + (c1 == c2));
         System.out.println("client1.equals(c2): " + c1.equals(c2));
         System.out.println("client1.hashCode() == c2.hashCode(): " + (c1.hashCode() == c2.hashCode()));
+        System.out.println("client1.equals(clientDifferent)" + c1.equals(clientDifferent));
 
         System.out.println("\n=== 6. Виклик обчислювальних методів у BeautySalonUtils ===");
         System.out.println("Клієнт: (record)" + client1);
