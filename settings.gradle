@@ -1,1 +1,5 @@
 rootProject.name = 'lab1'
+
+include 'src:test:java'
+include 'src:test'
+include 'src:test'
