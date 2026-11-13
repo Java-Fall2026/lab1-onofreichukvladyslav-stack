@@ -2,7 +2,7 @@ package ua.BeautySalon;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ua.BeautySalon.model.*;
+import ua.BeautySalon.exception.InvalidDataException;import ua.BeautySalon.loader.BeautyClientLoader;import ua.BeautySalon.model.*;
 import ua.BeautySalon.util.BeautySalonUtils;
 
 import java.time.LocalDate;
@@ -63,5 +63,35 @@ class BeautyServiceTest {
 
         LocalTime endTime = BeautySalonUtils.calculateEndTime(appointment);
         assertEquals(LocalTime.of(12, 30), endTime);
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidDataException with line number and cause on invalid client line")
+    void testParseClientLineInvalidDataThrowsException(){
+        String invalidLine = "+380971112233,Олена,invalid-date";
+        int lineNumber = 3;
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            BeautyClientLoader.parseClientLine(invalidLine, lineNumber);
+        });
+
+        assertTrue(exception.getMessage().contains("Line 3"), "Exception message should contain line number");
+
+        assertNotNull(exception.getCause(), "Exception cause should not be null");
+    }
+
+    @Test
+    @DisplayName("Should throw InvalidDataException when validation fails inside parseClientLine")
+    void testParseClientLineValidationFails(){
+        String invalidLine = "+380971112233,Марічка,2022-01-01";
+        int lineNumber = 5;
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class, () -> {
+            BeautyClientLoader.parseClientLine(invalidLine, lineNumber);
+        });
+
+        assertTrue(exception.getMessage().contains("Line 5"));
+        assertNotNull(exception.getCause());
+        assertInstanceOf(IllegalArgumentException.class, exception.getCause());
     }
 }

@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
-        System.out.println("=== ДЕМОНСТРАЦІЯ ЛАБОРАТОРНОЇ РОБОТИ №2 ===");
+        System.out.println("=== ДЕМОНСТРАЦІЯ ЛАБОРАТОРНОЇ РОБОТИ №3 ===");
 
         System.out.println("\n--- 1. Читання файлу з коректними й некоректними рядками ---");
         Path validPath = Path.of("data", "BeautyClients.csv");
@@ -44,9 +44,9 @@ public class Main {
         }
 
         System.out.println("\n--- 4. Демонстрація логування трьох рівнів (INFO, WARN, ERROR) ---");
-        log.info("Запуск успішно!.");
-        log.warn("Попередження про пропущений запис або некритичний збій");
-        log.error("Повідомлення про системну помилку введення-виведення");
+        log.info("Application Main started successfully.");
+        log.warn("This is a demonstration warning message.");
+        log.error("This is a demonstration error message for testing logs.");
 
 
         System.out.println("\n=== РОБОТУ ПРОГРАМИ ЗАВЕРШЕНО УСПІШНО ===");

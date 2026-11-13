@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -21,11 +22,6 @@ public class BeautyClientLoader {
 
     public static List<BeautyClient> loadClients(Path filePath){
         List<BeautyClient> clients = new ArrayList<>();
-
-        if (!Files.exists(filePath)){
-            log.warn("File not found at path: {}. Skipping loading", filePath);
-            return clients;
-        }
 
         log.info("Starting to load clients from file: {}", filePath);
 
@@ -48,10 +44,12 @@ public class BeautyClientLoader {
                 try{
                     BeautyClient client = parseClientLine(line, lineNumber);
                     clients.add(client);
-                } catch (InvalidDataException | RuntimeException e){
+                } catch (InvalidDataException e){
                     log.error("Error at line {}: {}. Skipping row.", lineNumber, e.getMessage());
                 }
             }
+        } catch (NoSuchFileException e){
+            log.warn("File not found at path: {}. Skipping loading", filePath);
         } catch (IOException e){
             log.error("I/O error occurred while reading file {}: {}", filePath, e.getMessage(), e);
         } finally{
@@ -61,7 +59,7 @@ public class BeautyClientLoader {
         return clients;
     }
 
-    private static BeautyClient parseClientLine(String line, int lineNumber) throws InvalidDataException{
+    public static BeautyClient parseClientLine(String line, int lineNumber) throws InvalidDataException{
         String[] parts = line.split(",", -1);
         if(parts.length < 3){
             throw new InvalidDataException("Line " + lineNumber + ": Insufficient colums, expected 3, got " + parts.length);
