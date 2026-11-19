@@ -1,0 +1,7 @@
+package ua.BeautySalon.exception;
+
+public class DuplicateIdentityException extends IllegalStateException {
+    public DuplicateIdentityException(String message) {
+        super(message);
+    }
+}

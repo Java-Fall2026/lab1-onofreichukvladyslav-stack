@@ -2,13 +2,16 @@ package ua.BeautySalon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ua.BeautySalon.exception.DuplicateIdentityException;
 import ua.BeautySalon.loader.BeautyClientLoader;
 import ua.BeautySalon.model.*;
+import ua.BeautySalon.repository.GenericRepository;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class Main {
 
@@ -17,38 +20,68 @@ public class Main {
     public static void main(String[] args) {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
-        System.out.println("=== ДЕМОНСТРАЦІЯ ЛАБОРАТОРНОЇ РОБОТИ №3 ===");
+        System.out.println("=== ДЕМОНСТРАЦІЯ ЛАБОРАТОРНОЇ РОБОТИ №4 ===");
 
-        System.out.println("\n--- 1. Читання файлу з коректними й некоректними рядками ---");
-        Path validPath = Path.of("data", "BeautyClients.csv");
-        List<BeautyClient> loadedClients = BeautyClientLoader.loadClients(validPath);
-        System.out.println("Успішно завантажено клієнтів з файлу: " + loadedClients.size());
-        for (BeautyClient client : loadedClients) {
-            System.out.println(" -> " + client);
-        }
+        System.out.println("\n--- 1. Три репозиторії різних типів і пошук за identity ---");
 
-        System.out.println("\n--- 2. Спроба прочитати відсутній файл ---");
-        Path missingPath = Path.of("data", "non_existent_file.csv");
-        List<BeautyClient> emptyList = BeautyClientLoader.loadClients(missingPath);
-        System.out.println("Результат читання відсутнього файлу (розмір списку): " + emptyList.size());
+        GenericRepository<BeautyClient> clientRepo = new GenericRepository<>("Clients", BeautyClient::phone);
+        GenericRepository<Master> masterRepo = new GenericRepository<>("Masters", Master::employeeId);
+        GenericRepository<BeautyService> serviceRepo = new GenericRepository<>("Services", BeautyService::getServiceCode);
 
-        System.out.println("\n--- 3. Некоректне значення в сеттері змінюваного класу і його обробка ---");
-        BeautyService service = new BeautyService("SRV-01", "Стрижка", ServiceCategory.HAIRCUT, 45, 600.0);
-        System.out.println("Початкова ціна послуги: " + service.getPrice());
+        BeautyClient client1 = BeautyClient.of("+380971112233", "Олена Коваль", LocalDate.of(1998, 5, 14));
+        Master master1 = Master.of("M-101", "Анна Ткаченко", ServiceCategory.HAIRCUT);
+        BeautyService service1 = new BeautyService("SRV-01", "Жіноча стрижка", ServiceCategory.HAIRCUT, 60, 850.0);
+
+        clientRepo.add(client1);
+        masterRepo.add(master1);
+        serviceRepo.add(service1);
+
+        System.out.println("Пошук клієнта (наявний): " + clientRepo.findByIdentity("+380971112233"));
+        System.out.println("Пошук клієнта (відсутній): " + clientRepo.findByIdentity("+380000000000"));
+        System.out.println("Пошук майстра (наявний): " + masterRepo.findByIdentity("M-101"));
+        System.out.println("Пошук послуги (відсутній): " + serviceRepo.findByIdentity("SRV-999"));
+
+
+        System.out.println("\n--- 2. Наповнення репозиторію з CSV-файла ---");
+        GenericRepository<BeautyClient> csvClientRepo = new GenericRepository<>("CsvClients", BeautyClient::phone);
+        int importedCount = BeautyClientLoader.loadClientsIntoRepository(Path.of("data", "BeautyClients.csv"), csvClientRepo);
+        System.out.println("Додано нових клієнтів із CSV: " + importedCount + ", всього в репозиторії: " + csvClientRepo.size());
+
+        System.out.println("\n--- 3. Дублікат через add vs addIfAbsent ---");
+        BeautyClient duplicateClient = BeautyClient.of("+380971112233", "Олена Інша", LocalDate.of(1995, 2,2));
+
 
         try {
-            service.setPrice(-150.0);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Перехоплено очікуваний виняток сеттера: " + e.getMessage());
-            System.out.println("Ціна залишилася незмінною: " + service.getPrice());
+            clientRepo.add(duplicateClient);
+        } catch (DuplicateIdentityException e) {
+            System.out.println("add кинув вийняток: " + e.getMessage());
         }
 
-        System.out.println("\n--- 4. Демонстрація логування трьох рівнів (INFO, WARN, ERROR) ---");
-        log.info("Application Main started successfully.");
-        log.warn("This is a demonstration warning message.");
-        log.error("This is a demonstration error message for testing logs.");
+        boolean inserted = clientRepo.addIfAbsent(duplicateClient);
+        System.out.println("addIfAbsent() повернув: " + inserted + ", розмір репозиторія: " + clientRepo.size());
 
+        System.out.println("\n--- 4. Видалення наявного та відсутнього елемента ---");
+        boolean removedExisting = clientRepo.removeByIdentity("+380971112233");
+        boolean removedMissing = clientRepo.removeByIdentity("+380999999999");
+        System.out.println("Видалення наявного клієнта: " + removedExisting + ", розмір репозиторія: " + clientRepo.size());
+        System.out.println("Видалення відсутнього клієнта: " + removedMissing + ", розмір репозиторія: " + clientRepo.size());
 
+        System.out.println("\n--- 5. Демонстрація логування трьох рівнів (INFO, WARN, ERROR) ---");
+        log.info("Demo INFO log: repository sizes checked.");
+        log.warn("Demo WARN log: duplicate or missing record condition.");
+        try {
+            ClientAppointment invalidAppointment = new ClientAppointment(
+                    BeautyClient.of("+380971112233", "Олена", LocalDate.of(1998, 5, 14)),
+                    master1,
+                    new BeautyService("SRV-02", "Масаж", ServiceCategory.MASSAGE, 60, 1000),
+                    LocalDate.now(),
+                    LocalTime.of(11, 0),
+                    AppointmentState.CONFIRMED
+            );
+            System.out.println(invalidAppointment);
+        } catch (IllegalArgumentException e){
+            log.error("Demo ERROR log: propagating validation failure -> {}", e.getMessage(), e);
+        }
         System.out.println("\n=== РОБОТУ ПРОГРАМИ ЗАВЕРШЕНО УСПІШНО ===");
     }
 }

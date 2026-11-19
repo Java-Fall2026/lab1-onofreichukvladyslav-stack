@@ -2,8 +2,10 @@ package ua.BeautySalon.loader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ua.BeautySalon.exception.DuplicateIdentityException;
 import ua.BeautySalon.exception.InvalidDataException;
 import ua.BeautySalon.model.BeautyClient;
+import ua.BeautySalon.repository.GenericRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class BeautyClientLoader {
@@ -80,5 +83,21 @@ public class BeautyClientLoader {
         } catch (IllegalArgumentException e){
             throw new InvalidDataException("Line " + lineNumber + ": Validation failed -> " + e.getMessage(), e);
         }
+    }
+
+    public static int loadClientsIntoRepository(Path filePath, GenericRepository<BeautyClient> repository){
+        Objects.requireNonNull(repository, "Repository must not be null");
+        List<BeautyClient> parsed = loadClients(filePath);
+        int addedCount = 0;
+
+        for (BeautyClient client : parsed){
+            try {
+                repository.add(client);
+                addedCount++;
+            } catch (DuplicateIdentityException e){
+                // Duplicate is already logged at WARN level inside GenericRepository.add(...)
+            }
+        }
+        return addedCount;
     }
 }
