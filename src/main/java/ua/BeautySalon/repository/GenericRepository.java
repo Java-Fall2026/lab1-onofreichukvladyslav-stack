@@ -37,7 +37,7 @@ public class GenericRepository<T> {
 
         if (storage.containsKey(identity)){
             String message = "Duplicate identity '" + identity + "' in repository '" + name + "'";
-            log.warn("Rejected duplicate in repository '{}': identity='{}'", name, identity);
+            log.error("Duplicate identity '{}' detected in repository '{}', throwing DuplicateIdentityException", identity, name);
             throw new DuplicateIdentityException(message);
         }
 
@@ -58,7 +58,7 @@ public class GenericRepository<T> {
         return true;
     }
 
-    public void addAll(Collection<T> items){
+    public void addAll(Collection<? extends T> items){
         Objects.requireNonNull(items, "Items collection must be not null");
         for (T item : items) add(item);
     }
@@ -80,9 +80,17 @@ public class GenericRepository<T> {
     }
 
     public Optional<T> findByIdentity(String identity){
-        if (identity == null || identity.isBlank()) return Optional.empty();
+        if (identity == null || identity.isBlank()) {
+            log.warn("Lookup with blank identity in repository '{}'", name);
+            return Optional.empty();
+        }
+        T found = storage.get(identity);
+        if (found == null){
+            log.warn("Item with identity '{}' not found in repository '{}'", identity, name);
+            return Optional.empty();
+        }
 
-        return Optional.ofNullable(storage.get(identity));
+        return Optional.of(found);
     }
 
     public List<T> findAll(){

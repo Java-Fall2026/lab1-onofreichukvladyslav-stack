@@ -5,8 +5,8 @@
         </encoder>
     </appender>
 
-    <!-- Не засмічуємо консоль 100 000 рядками INFO під час бенчмарку -->
-    <logger name="ua.BeautySalon.repository.GenericRepository" level="WARN"/>
+
+    <logger name="ua.BeautySalon.repository.GenericRepository" level="ERROR"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
